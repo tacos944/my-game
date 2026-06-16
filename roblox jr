@@ -1,0 +1,118 @@
+<title>Grow a Garden</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #90EE90;
+        }
+
+        #garden {
+            display: grid;
+            grid-template-columns: repeat(4, 80px);
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .plot {
+            width: 80px;
+            height: 80px;
+            border: 2px solid brown;
+            background-color: peru;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 30px;
+        }
+
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🌱 Grow a Garden 🌱</h1>
+
+    <h2>Money: $<span id="money">5</span></h2>
+    <h2>Carrot Seeds: <span id="seeds">0</span></h2>
+
+    <h3>Shop</h3>
+    <button onclick="buyCarrot()">
+        Buy Carrot Seed ($1)
+    </button>
+
+    <h3>Garden</h3>
+    <p>Click an empty plot to plant a carrot. Harvest grown carrots for $2.</p>
+
+    <div id="garden"></div>
+
+    <script>
+        let money = 5;
+        let seeds = 0;
+
+        // 8 garden plots
+        let plots = Array(8).fill("empty");
+
+        function updateGame() {
+            document.getElementById("money").textContent = money;
+            document.getElementById("seeds").textContent = seeds;
+
+            const garden = document.getElementById("garden");
+            garden.innerHTML = "";
+
+            plots.forEach((plotState, index) => {
+                const plot = document.createElement("div");
+                plot.className = "plot";
+
+                if (plotState === "empty") {
+                    plot.textContent = "🟫";
+                } else if (plotState === "growing") {
+                    plot.textContent = "🌱";
+                } else if (plotState === "grown") {
+                    plot.textContent = "🥕";
+                }
+
+                plot.onclick = () => handlePlot(index);
+
+                garden.appendChild(plot);
+            });
+        }
+
+        function buyCarrot() {
+            if (money >= 1) {
+                money--;
+                seeds++;
+                updateGame();
+            } else {
+                alert("You don't have enough money!");
+            }
+        }
+
+        function handlePlot(index) {
+            if (plots[index] === "empty" && seeds > 0) {
+                seeds--;
+                plots[index] = "growing";
+                updateGame();
+
+                // Carrot grows in 3 seconds
+                setTimeout(() => {
+                    plots[index] = "grown";
+                    updateGame();
+                }, 3000);
+
+            } else if (plots[index] === "grown") {
+                money += 2;
+                plots[index] = "empty";
+                updateGame();
+            }
+        }
+
+        updateGame();
+    </script>
+
+</body>
+</html>
